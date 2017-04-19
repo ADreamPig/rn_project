@@ -13,6 +13,11 @@ import {
 } from 'react-native';
 import MyTitleBar from '../component/myTitleBar.js';
 import CheckBox from 'react-native-check-box';
+import Toast,{DURATION} from "react-native-easy-toast";
+//import popular_def_lans from '../../res/data/popular_def_lans.json'
+var popular_def_lans = require('../../res/data/popular_def_lans.json');
+
+
 var Dimensions = require('Dimensions');
 var ScreenWidth = Dimensions.get('window').width;
 var ScreenHeight = Dimensions.get('window').height;
@@ -25,37 +30,30 @@ export default  class CustomKeyPage extends Component {
         super(props);
         // 初始状态
         this.state = {
-            data: [
-                {name: 'Android', checked: true},
-                {name: 'IOS', checked: false},
-                {name: 'React', checked: true},
-                {name: 'Java', checked: true},
-                {name: 'JS', checked: true}
-            ]
+            data: popular_def_lans
         };
     }
 
     componentDidMount(){
-      alert(this.props.name);
-        //this.setState({
-        //    name: this.props.name
-        //});
+        AsyncStorage.getItem('Custom_key')
+            .then(value=>{
+                alert(value);
+            this.setState({data:JSON.parse(value)})
+        })
     }
 
-    hanldClick() {
+
+
+    hanldBack=()=> {
         //把任务栈顶部的任务清除
-        const navigator = this.props.navigator;
-        navigator.pop();
-        //this.props.navigator.pop();
-        //console.log(this.props.navigator);
-        //this.props.navigator.pop()
+        this.props.navigator.pop();
     }
 
     returnleft = ()=> {
         return <TouchableOpacity
             activeOpacity={0.7}
             style={{flexDirection:'row',width:24,height:24}}
-            onPress={this.hanldClick}>
+            onPress={this.hanldBack}>
             <Image style={{width:24,height:24}} source={require('../../res/images/ic_arrow_back_white_36pt.png')}/>
         </TouchableOpacity>
     }
@@ -66,7 +64,7 @@ export default  class CustomKeyPage extends Component {
 
     renderCheckBoxs() {
         return this.state.data.map((item, i)=> {
-            console.log(ScreenWidth / 2);
+
             return <CheckBox
                 key={`view_${i}`}
                 style={{width:ScreenWidth/2,height:50, padding:10}}
@@ -81,8 +79,10 @@ export default  class CustomKeyPage extends Component {
     }
 
     handleSave=()=>{
-        AsyncStorage.setItem('Custom_key',JSON.stringify(this.state.data)).then(()=>{
-            alert(JSON.stringify(this.state.data));
+        AsyncStorage.setItem('Custom_key',JSON.stringify(this.state.data))
+            .then(()=>{
+            this.refs.toast.show('保存成功！',DURATION.LENGTH_LONG);
+            this.hanldBack();
         });
 
     }
@@ -97,6 +97,7 @@ export default  class CustomKeyPage extends Component {
             <View style={styles.container}>
                 {this.renderCheckBoxs()}
             </View>
+            <Toast ref='toast'/>
         </View>
     }
 }

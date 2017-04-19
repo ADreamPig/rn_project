@@ -14,6 +14,7 @@ import {
 import MyTitleBar from '../component/myTitleBar';
 import ProjectRow from '../component/ProjectRow';
 import CustomKeyPage from '../pages/CustomKeyPage';
+import SortKeyPage from '../pages/SortKeyPage';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 
 
